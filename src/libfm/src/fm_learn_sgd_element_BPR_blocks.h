@@ -71,13 +71,29 @@ class fm_learn_sgd_element_BPR_blocks: public fm_learn_sgd {
 			n_samples_cases = train.relation(SAMPLED_BLOCK).data->num_cases;
 			att_sampled_offsets = train.relation(SAMPLED_BLOCK).data->attr_offset;
 			uint& training_samples = train.relation(FIXED_BLOCK).data_row_to_relation_row.dim;
+
+			std::cout << "training_samples = " << training_samples << std::endl;
+
 			//pre-step 1 : count positive observations
 			std::map<uint,uint> pos_observations;
 			std::map<uint,uint> aux_counter;
+			uint max_fixed_block_id = train.relation(FIXED_BLOCK).data->data->getNumRows() - 1;
+			std::cout << "max_fixed_block_id = " << max_fixed_block_id << std::endl;
 			for (int i = 0; i<training_samples; i++){
-				pos_observations[train.relation(FIXED_BLOCK).data_row_to_relation_row(i)]++;
-				aux_counter[train.relation(FIXED_BLOCK).data_row_to_relation_row(i)]++;
+				uint& block_id = train.relation(FIXED_BLOCK).data_row_to_relation_row(i);
+				assert(block_id <= max_fixed_block_id && "FIXED_BLOCK Relation Id Too Large");
+				pos_observations[block_id]++;
+				aux_counter[block_id]++;
 			}
+
+			// Ensure none of the SAMPLED relation row ids is too large
+			uint max_sampled_block_id = train.relation(SAMPLED_BLOCK).data->data->getNumRows() - 1;
+			std::cout << "max_sampled_block_id = " << max_sampled_block_id << std::endl;
+			for (int i = 0; i<training_samples; i++){
+				uint& block_id = train.relation(SAMPLED_BLOCK).data_row_to_relation_row(i);
+				assert(block_id <= max_sampled_block_id && "SAMPLED_BLOCK Relation Id Too Large");
+			}
+
 			//pre-step 2 : build arrays
 			std::map<uint,uint*> pos_values;
 			std::map<uint,uint>::iterator map_iter;

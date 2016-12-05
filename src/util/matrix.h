@@ -293,6 +293,7 @@ template <typename T> class DVector {
 
 
 		void load(std::string filename) {
+			std::cout << "DVector::load() filename = " << filename << " dim = " << dim <<std::endl;
 			std::ifstream in_file (filename.c_str());
 			if (! in_file.is_open()) {
 				throw "Unable to open file " + filename;
@@ -300,8 +301,11 @@ template <typename T> class DVector {
 			for (uint i = 0; i < dim; i++) {
 				T v;
 				in_file >> v;
+				assert(in_file && "Not enough records in the file");
 				value[i] = v;
 			}
+			T v;
+			assert(!(in_file >> v) && "Too many records in the file");
 			in_file.close();
 		}
 

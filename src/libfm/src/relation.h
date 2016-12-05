@@ -63,6 +63,7 @@ class RelationJoin {
 		RelationData* data;
 
 		void load(std::string filename, uint expected_row_count) {
+			std::cout << "RelationJoin::load() filename = " << filename << " expected_row_count = " << expected_row_count << std::endl;
 			bool do_binary = false;
 			// check if binary or text format should be read
 			{
@@ -157,6 +158,7 @@ void RelationData::load(std::string filename) {
 	catch (int e){
 		//MATRICES ARE IN TEXT FORMAT
 		std::string text_format_filename = filename + ".x";
+		std::cout << "RelationData::load() " << text_format_filename << std::endl;
 		this->data = new LargeSparseMatrixMemory<DATA_FLOAT>();
 		DVector< sparse_row<DATA_FLOAT> >& data = ((LargeSparseMatrixMemory<DATA_FLOAT>*)this->data)->data;
 
