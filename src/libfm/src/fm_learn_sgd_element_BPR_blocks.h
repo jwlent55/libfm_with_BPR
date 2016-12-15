@@ -56,6 +56,8 @@ class fm_learn_sgd_element_BPR_blocks: public fm_learn_sgd {
 			std::cout << "learnrate=" << learn_rate << std::endl;
 			std::cout << "learnrates=" << learn_rates(0) << "," << learn_rates(1) << "," << learn_rates(2) << std::endl;
 			std::cout << "#iterations=" << num_iter << std::endl;
+			std::cout << "regw=" << fm->regw << std::endl;
+			std::cout << "regv=" << fm->regv << std::endl;
 			std::cout.flush();
 			std::cout << "BPR BLOCKS STARTED ..." << std::endl;
 
@@ -185,15 +187,14 @@ class fm_learn_sgd_element_BPR_blocks: public fm_learn_sgd {
 					Reg += fm->regw * fm->w(attr) * fm->w(attr);
 					double sum = 0;
 					for (int f = 0; f < fm->num_factor; f++) {
-						sum += fm->v(f,attr);
+						Reg += fm->regv * fm->v(f,attr) * fm->v(f,attr);
 					}
-					Reg += fm->regv * sum * sum;
 				}
 
 				double BPR_OPT = total;
 				BPR_OPT -= Reg;
 
-				std::cout << iteration_time << "\t" << j << "\t" << BPR_OPT << std::endl;
+				std::cout << iteration_time << "\t" << j << "\t" << BPR_OPT << "\t" << total << "\t" << Reg << std::endl;
 				if (out_conv){ out_conv << iteration_time << "\t" << j << "\t" << BPR_OPT << std::endl; }
 			}
 			if (out_conv){ out_conv.close(); }
